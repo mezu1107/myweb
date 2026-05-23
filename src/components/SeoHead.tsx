@@ -8,8 +8,18 @@ interface Props {
   primaryKeyword?: string;
 }
 
-export const SeoHead = ({ route, defaultTitle, defaultDescription, primaryKeyword }: Props) => {
-  const seo = useSeo({ route, title: defaultTitle, description: defaultDescription, primaryKeyword });
+export const SeoHead = ({
+  route,
+  defaultTitle,
+  defaultDescription,
+  primaryKeyword,
+}: Props) => {
+  const seo = useSeo({
+    route,
+    title: defaultTitle,
+    description: defaultDescription,
+    primaryKeyword,
+  });
 
   const jsonLd = {
     "@context": "https://schema.org",
@@ -28,27 +38,45 @@ export const SeoHead = ({ route, defaultTitle, defaultDescription, primaryKeywor
   return (
     <Helmet>
       <title>{seo.title}</title>
+
       <meta name="description" content={seo.description} />
       <meta name="keywords" content={seo.keywords} />
+
       <link rel="canonical" href={seo.canonical} />
-      {seo.noindex && <meta name="robots" content="noindex,nofollow" />}
+
+      {seo.noindex ? (
+        <meta name="robots" content="noindex,nofollow" />
+      ) : (
+        <meta name="robots" content="index,follow" />
+      )}
 
       <meta property="og:type" content="website" />
       <meta property="og:title" content={seo.title} />
       <meta property="og:description" content={seo.description} />
       <meta property="og:url" content={seo.canonical} />
-      {seo.ogImage && <meta property="og:image" content={seo.ogImage} />}
+
+      {seo.ogImage && (
+        <meta property="og:image" content={seo.ogImage} />
+      )}
 
       <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={seo.title} />
       <meta name="twitter:description" content={seo.description} />
-      {seo.ogImage && <meta name="twitter:image" content={seo.ogImage} />}
+
+      {seo.ogImage && (
+        <meta name="twitter:image" content={seo.ogImage} />
+      )}
 
       {seo.tags.map((t) => (
         <meta key={t} property="article:tag" content={t} />
       ))}
 
-      <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(jsonLd),
+        }}
+      />
     </Helmet>
   );
 };
